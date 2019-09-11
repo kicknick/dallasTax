@@ -1,3 +1,4 @@
+var puppeteer = require('puppeteer')
 var xl = require('excel4node');
 const readline = require('readline');
 const fs = require('fs');
@@ -25,8 +26,6 @@ function initTables() {
 		ws.cell(1, 3).string("Total due")
 }
 initTables()
-
-const text = '00000420976000000'
 
 
 
