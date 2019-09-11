@@ -1,4 +1,3 @@
-const puppeteer = require('puppeteer');
 var xl = require('excel4node');
 const readline = require('readline');
 const fs = require('fs');
