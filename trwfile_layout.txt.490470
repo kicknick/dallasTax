@@ -1,0 +1,43 @@
+Field	Field			Start		Field		End		Character	Field Description						Notes
+No.	Name			Position	Length		Position	Type										
+1	ACCOUNT			1		34		34		CHAR		A unique number that identifies a property			
+2	YEAR			35		4		38		NUMERIC		A four position code that identifies the year			
+3	JURISDICTION		39		4		42		NUMERIC		A four position code that identifies the jurisdiction		
+4	TAX-UNIT-ACCT		43		34		76		CHAR		Appraisal District No.
+5	LEVY			77		11		87		NUMERIC		Shows levy on account						assumed decimal
+6	HOMESTEAD		88		1		88		CHAR		Homestead exemption						'Y' if homestead added
+7	OVER65			89		1		89		CHAR		Over 65 exemption						'Y' if Over 65 added
+8	VETERAN			90		1		90		CHAR		Veterans Exemption						'Y' if Veterans' exemption added
+9	DISABLED		91		1		91		CHAR		Disabled Exemption						'Y' if Disabled exemption added
+10	AG			92		1		92		CHAR		Ag Exemption							'Y' if Ag exemption added
+11	DATE-PAID		93		8		100		CHAR		If account paid, date paid is listed - YYYYMMDD			
+12	DUE-DATE		101		8		108		CHAR		Date account is due - YYYYMMDD					
+13	OMIT-FLAG		109		2		110		CHAR										
+14	LEVY-BALANCE		111		11		121		NUMERIC		Gives remaining levy due on account				assumed decimal
+15	SUIT			122		1		122		CHAR		Indicates a suit is pending					'A,J,L' if suit is pending
+16	CAUSENO			123		40		162		CHAR		Causeno of suit							
+17	BANKCODE		163		1		163		CHAR		Indicates a bankruptcy on file					'A,J,L,N,B' if bankruptcy on file
+18	BANKRUPTNO		164		40		203		CHAR		Bankruptcy number						
+19	ATTORNEY		204		1		204		CHAR		Indicates a 33.07 date is set					'Y' or blank
+20	COURT-COST		205		7		211		NUMERIC										
+21	ABSTRACT-FEE		212		7		218		NUMERIC										
+22	DEFERRAL		219		1		219		CHAR		Deferral Flag							'D' if deferred acct
+23	BILLSUPP		220		1		220		CHAR										
+24	SPLIT-PMTFLAG		221		1		221		CHAR		Split Payment Option						'Q,H,D' Q=QTR,H=Half,D=Disaster
+25	CATEGORY-CODE		222		4		225		CHAR										
+26	OWNER			226		40		265		CHAR		Owner address line 1						
+27	ADDRESS2		266		40		305		CHAR		Owner address line 2						
+28	ADDRESS3		306		40		345		CHAR		Owner address line 3						
+29	ADDRESS4		346		40		385		CHAR		Owner address line 4						
+30	CITY			386		40		425		CHAR		Address City							
+31	STATE			426		2		427		CHAR		Address State							
+32	ZIP			428		12		439		CHAR		Address Zipcode							
+33	ROLL-CODE		440		1		440		CHAR		Property Roll Code						
+34	PARCEL NO.		441		8		448		NUMERIC		Parcel No.							
+35	PARCEL NAME		449		40		488		CHAR		Parcel Name							
+36	PAYMENT AGREEMENT	489		1		489		CHAR		Payment Agreement Flag						'Y' if a payment agreement exists, otherwise 'N'
+37	TOT_AMT_DUE		490		11		500		NUMERIC		Total Amt Due as of EOM						assumed decimal
+38	TOT_AMT_DUE-30		501		11		511		NUMERIC		Total Amt Due + 30 days						assumed decimal
+39	TOT_AMT_DUE-60		512		11		522		NUMERIC		Total Amt Due + 60 days						assumed decimal
+40	TOT_AMT_DUE-90		523		11		533		NUMERIC		Total Amt Due + 90 days						assumed decimal
+41	AMOUNT INDICATOR	534		1		534		CHAR		Internal Use							
