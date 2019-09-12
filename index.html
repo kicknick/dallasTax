@@ -58,10 +58,14 @@ function parseLine(line, callback) {
 
 	// 4. Если код ответа сервера не 200, то это ошибка
 	if (xhr.status != 200) {
-	  // обработать ошибку
-	  alert( xhr.status + ': ' + xhr.statusText ); // пример вывода: 404: Not Found
+	  	console.log( xhr.status + ': ' + xhr.responseText ); // пример вывода: 404: Not Found
+		  loadingBar.innerHTML = loading
+			var p = document.createElement("p");
+			p.innerHTML = id + ' ' +xhr.responseText
+			infoBar.appendChild(p)
+			callback()
+
 	} else {
-	  // вывести результат
 		console.log(xhr.responseText )
 		loadingBar.innerHTML = loading
 		var p = document.createElement("p");

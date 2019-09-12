@@ -30,54 +30,31 @@ initTables()
 
 
 let scrape = async (id, callback) => {
-    // const browser = await puppeteer.launch({headless: false});
- 		const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto('https://www.dallasact.com/act_webdev/dallas/searchbyaccount.jsp');
-		await page.type('body > table > tbody > tr:nth-child(2) > td > table > tbody > tr.trans > td > table > tbody > tr > td > center > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > h3 > input[type=text]', id);
-		
-
-
-		//await page.waitFor(3000)
-		const [response] = await Promise.all([
-		  page.waitForNavigation(), // The promise resolves after navigation has finished
-			page.click('body > table > tbody > tr:nth-child(2) > td > table > tbody > tr.trans > td > table > tbody > tr > td > center > form > table > tbody > tr:nth-child(3) > td > center > input[type=submit]')
-		]);
-
-    // const res1 = await page.evaluate(() => {
-    //     let address = document.querySelector('#flextable > tbody > tr > td:nth-child(2)').innerHTML;
-    //     let propAddress = document.querySelector('#flextable > tbody > tr > td:nth-child(3)').innerHTML;
-    //     return {
-    //     	address,
-    //     	propAddress
-    //     }
-    // });
-
-
-    	const [resp] = await Promise.all([
-			  page.waitForNavigation(), // The promise resolves after navigation has finished
-			  page.click('#flextable > tbody > tr > td.tightcell > a') // Clicking the link will indirectly cause a navigation
-			]);
-    	// await page.click('#flextable > tbody > tr > td.tightcell > a');
-    	// await page.waitFor(3000)
-
-    const res2 = await page.evaluate(() => {
-      let value = document.querySelector('body > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td > table:nth-child(6) > tbody > tr > td:nth-child(1) > h3').innerHTML;
-      return {
-				value
-	      }
+  // const browser = await puppeteer.launch({headless: false});
+	const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  try{
+  	await page.goto('https://www.dallasact.com/act_webdev/dallas/searchbyaccount.jsp');
+  	await page.type('body > table > tbody > tr:nth-child(2) > td > table > tbody > tr.trans > td > table > tbody > tr > td > center > form > table > tbody > tr:nth-child(2) > td:nth-child(2) > h3 > input[type=text]', id);
+  	var selector1 = 'body > table > tbody > tr:nth-child(2) > td > table > tbody > tr.trans > td > table > tbody > tr > td > center > form > table > tbody > tr:nth-child(3) > td > center > input[type=submit]'
+  	await page.waitForSelector(selector1);
+  	await page.click(selector1)
+  	var selector2 = '#flextable > tbody > tr > td.tightcell > a'
+  	await page.waitForSelector(selector2);
+  	await page.click(selector2)
+  	var selector3 = 'body > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td > table:nth-child(6) > tbody > tr > td:nth-child(1) > h3'
+  	await page.waitForSelector(selector3);
+  	const res2 = await page.evaluate(() => {
+    var value = document.querySelector('body > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(2) > td > table:nth-child(6) > tbody > tr > td:nth-child(1) > h3').innerHTML;
+    return {
+			value
+      }
 	  });
-
-		// const result = {};
-		// Object.keys(res1)
-		//   .forEach(key => result[key] = res1[key]);
-
-		// Object.keys(res2)
-		//   .forEach(key => result[key] = res2[key]);
-
-    browser.close();
-    // return result;
-    callback(res2.value)
+	  browser.close();
+  	callback(res2.value)
+  } catch(e) {
+  	return callback(null, e)
+  }
 };
 
 
@@ -92,12 +69,12 @@ function cleanString(st) {
 
 function writeToTable(value, callback){
 	let address = cleanString(value.split('Address:')[1].split('Property Site')[0]);
-	console.log(address)
 	let propAddress = cleanString(value.split('Property Site Address:')[1].split('Legal Description:')[0])
 	let totalAD = cleanString(value.split('Total Amount Due:')[1])
-	console.log(propAddress)
-	console.log(totalAD)
-	console.log('------------------------')
+	// console.log(address)
+	// console.log(propAddress)
+	// console.log(totalAD)
+	// console.log('------------------------')
 	ws.cell(idCount, 1)
 	  .string(address)
 	  .style(style);
@@ -126,10 +103,18 @@ app.get('/id', function(req, res) {
   console.log(id)
   // console.log(req.body)
   // const id = req.body.id
-	scrape(id, function(result) {
-		writeToTable(result, function() {
-			res.send(200)
-		})
+	scrape(id, function(result, err) {
+		if(err) {
+			console.error(err)
+			res.status(400).send('Error in retrieving user from database');
+		}
+		else {
+			console.log(result)
+			writeToTable(result, function() {
+				res.send(200).end();
+			})
+		}
+
 	});
 });
 
