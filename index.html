@@ -5,7 +5,7 @@
 <body>
 <input type="file" id="files" name="files[]" multiple />
 
-<button onclick="window.location='http://localhost:3000/download';">DOWNLOAD</button>
+<button id="downloadButton">DOWNLOAD</button>
 	<div>loading:<span id="loading">0</span>%</div>
 <div id="infoBar">
 
@@ -20,6 +20,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
 } else {
   alert('The File APIs are not fully supported in this browser.');
 }
+
 var loadingBar = document.getElementById("loading")
 var infoBar = document.getElementById("infoBar");
 // var EstimTime = document.getElementById("estimTime");
@@ -120,118 +121,122 @@ let selectFile = (evt) => {
 
 
 
-
-
-
-
-
-
-document.getElementById('files').addEventListener('change', selectFile, false);
-
-
-function parseFile(file, callback) {
-    var fileSize   = file.size;
-    var chunkSize  = 64 * 1024; // bytes
-    var offset     = 0;
-    var self       = this; // we need a reference to the current object
-    var chunkReaderBlock = null;
-
-    var readEventHandler = function(evt) {
-        if (evt.target.error == null) {
-            offset += evt.target.result.length;
-            console.log((offset/fileSize)*100) //left to end
-            callback(evt.target.result); // callback for handling read chunk
-        } else {
-            console.log("Read error: " + evt.target.error);
-            return;
-        }
-        if (offset >= fileSize) {
-            console.log("Done reading file");
-            return;
-        }
-
-        // of to the next chunk
-        chunkReaderBlock(offset, chunkSize, file);
-    }
-
-    chunkReaderBlock = function(_offset, length, _file) {
-        var r = new FileReader();
-        var blob = _file.slice(_offset, length + _offset);
-        r.onload = readEventHandler;
-        r.readAsText(blob);
-    }
-
-    // now let's start the read with the first block
-    chunkReaderBlock(offset, chunkSize, file);
+document.addEventListener("DOMContentLoaded", ready);
+function ready() {
+	console.log("ready")
+	document.getElementById('files').addEventListener('change', selectFile, false);
+	document.getElementById("downloadButton").onclick = function() {
+ 		window.open("http://"+window.location.hostname+":"+window.location.port+"/download", "_self");
+	}
 }
 
 
 
-  function handleFileSelect(evt) {
-    var files = evt.target.files; // FileList object
-
-    // files is a FileList of File objects. List some properties.
-    var output = [];
-    for (var i = 0, f; f = files[i]; i++) {
-      output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
-                  f.size, ' bytes, last modified: ',
-                  f.lastModifiedDate.toLocaleDateString(), '</li>');
-  		console.log(f)
-    }
-    var f = files[0]
-
-		var reader = new FileReader();
-		reader.onload = function(event) {
-		    var contents = event.target.result;
-		    console.log(contents);
-		};
-		 
-		reader.onerror = function(event) {
-		    console.error("Файл не может быть прочитан! код " + event.target.error.code);
-		};
-		 
-		// reader.readAsText(f);
-
-	function findColumnLength(file, callback) {
-	    // 1 KB at a time, because we expect that the column will probably small.
-	    var CHUNK_SIZE = 1024;
-	    var offset = 0;
-	    var fr = new FileReader();
-	    fr.onload = function() {
-	        var view = new Uint8Array(fr.result);
-	        for (var i = 0; i < view.length; ++i) {
-	            if (view[i] === 10 || view[i] === 13) {
-	                // \n = 10 and \r = 13
-	                // column length = offset + position of \r or \n
-	                callback(offset + i);
-	                return;
-	            }
-	        }
-	        // \r or \n not found, continue seeking.
-	        offset += CHUNK_SIZE;
-	        seek();
-	    };
-	    fr.onerror = function() {
-	        // Cannot read file... Do something, e.g. assume column size = 0.
-	        callback(0);
-	    };
-	    seek();
-
-	    function seek() {
-	        if (offset >= file.size) {
-	            // No \r or \n found. The column size is equal to the full
-	            // file size
-	            callback(file.size);
-	            return;
-	        }
-	        var slice = file.slice(offset, offset + CHUNK_SIZE);
-	        fr.readAsArrayBuffer(slice);
-	    }
-	}
 
 
-    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-  }
+// function parseFile(file, callback) {
+//     var fileSize   = file.size;
+//     var chunkSize  = 64 * 1024; // bytes
+//     var offset     = 0;
+//     var self       = this; // we need a reference to the current object
+//     var chunkReaderBlock = null;
+
+//     var readEventHandler = function(evt) {
+//         if (evt.target.error == null) {
+//             offset += evt.target.result.length;
+//             console.log((offset/fileSize)*100) //left to end
+//             callback(evt.target.result); // callback for handling read chunk
+//         } else {
+//             console.log("Read error: " + evt.target.error);
+//             return;
+//         }
+//         if (offset >= fileSize) {
+//             console.log("Done reading file");
+//             return;
+//         }
+
+//         // of to the next chunk
+//         chunkReaderBlock(offset, chunkSize, file);
+//     }
+
+//     chunkReaderBlock = function(_offset, length, _file) {
+//         var r = new FileReader();
+//         var blob = _file.slice(_offset, length + _offset);
+//         r.onload = readEventHandler;
+//         r.readAsText(blob);
+//     }
+
+//     // now let's start the read with the first block
+//     chunkReaderBlock(offset, chunkSize, file);
+// }
+
+
+
+//   function handleFileSelect(evt) {
+//     var files = evt.target.files; // FileList object
+
+//     // files is a FileList of File objects. List some properties.
+//     var output = [];
+//     for (var i = 0, f; f = files[i]; i++) {
+//       output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+//                   f.size, ' bytes, last modified: ',
+//                   f.lastModifiedDate.toLocaleDateString(), '</li>');
+//   		console.log(f)
+//     }
+//     var f = files[0]
+
+// 		var reader = new FileReader();
+// 		reader.onload = function(event) {
+// 		    var contents = event.target.result;
+// 		    console.log(contents);
+// 		};
+// 		 
+// 		reader.onerror = function(event) {
+// 		    console.error("Файл не может быть прочитан! код " + event.target.error.code);
+// 		};
+// 		 
+// 		// reader.readAsText(f);
+
+// 	function findColumnLength(file, callback) {
+// 	    // 1 KB at a time, because we expect that the column will probably small.
+// 	    var CHUNK_SIZE = 1024;
+// 	    var offset = 0;
+// 	    var fr = new FileReader();
+// 	    fr.onload = function() {
+// 	        var view = new Uint8Array(fr.result);
+// 	        for (var i = 0; i < view.length; ++i) {
+// 	            if (view[i] === 10 || view[i] === 13) {
+// 	                // \n = 10 and \r = 13
+// 	                // column length = offset + position of \r or \n
+// 	                callback(offset + i);
+// 	                return;
+// 	            }
+// 	        }
+// 	        // \r or \n not found, continue seeking.
+// 	        offset += CHUNK_SIZE;
+// 	        seek();
+// 	    };
+// 	    fr.onerror = function() {
+// 	        // Cannot read file... Do something, e.g. assume column size = 0.
+// 	        callback(0);
+// 	    };
+// 	    seek();
+
+// 	    function seek() {
+// 	        if (offset >= file.size) {
+// 	            // No \r or \n found. The column size is equal to the full
+// 	            // file size
+// 	            callback(file.size);
+// 	            return;
+// 	        }
+// 	        var slice = file.slice(offset, offset + CHUNK_SIZE);
+// 	        fr.readAsArrayBuffer(slice);
+// 	    }
+// 	}
+
+
+//     document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+//   }
 
 
 
